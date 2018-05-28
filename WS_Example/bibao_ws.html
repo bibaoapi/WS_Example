@@ -1,0 +1,54 @@
+<html>
+    <head>
+    	<title>币包WS_DEMO</title>
+    	<meta charset="utf-8"/>
+        <script type="text/javascript" src="static/jquery-1.10.2.min.js"></script>  
+    </head>
+    <body>
+    <div id="message">
+         
+    </div> 
+    <script type="text/javascript">  
+        var socket = new WebSocket("wss://www.bao.top/vct-ws/webSocket");  
+        
+        var socketOpen = false;
+        socket.onerror = function () {
+            socketOpen = false;
+        };
+        socket.onclose = function (event) {
+            socketOpen = false;
+            console.log("WebSocket close at time: " + new Date());
+        };
+        socket.onopen = function (event) {
+            socketOpen = true;
+            socket.binaryType = "arraybuffer";
+	        //Kline
+	        socket.send(JSON.stringify({
+	            "req": "market.btcusdt.kline.1min", 
+                "id": "123456" 
+	        }));  
+		   //买5卖5
+		    // socket.send(JSON.stringify({ 
+			      // "sub": "market.btcusdt.depth.step0", 
+			      // "id": "123456" 
+	       //  })); 
+	        //实时成交
+	        // socket.send(JSON.stringify({ 
+	        //     "sub": "market.btcusdt.trade.detail", 
+	        //     "id": "123456" 
+	        // })); 
+
+        }; 
+        socket.onmessage = function (event) {  
+            var data = JSON.parse(event.data); 
+            $("#message").append(JSON.stringify(data)+"<br>"); 
+
+            if (data.ping) { 
+            	 socket.send(JSON.stringify({"pong":data.ping}));
+            }
+        }
+    </script> 
+    </body> 
+</html>
+
+
