@@ -3,6 +3,8 @@
     	<title>币包WS_DEMO</title>
     	<meta charset="utf-8"/>
         <script type="text/javascript" src="static/jquery-1.10.2.min.js"></script>  
+        <script type="text/javascript" src="static/pako.min.js"></script> 
+
     </head>
     <body>
     <div id="message">
@@ -24,7 +26,7 @@
             socket.binaryType = "arraybuffer";
 	        //Kline
 	        socket.send(JSON.stringify({
-	            "req": "market.btcusdt.kline.1min", 
+	            "req": "market.ubcusdt.kline.1min", 
                 "id": "123456" 
 	        }));  
 		    //买5卖5
@@ -40,7 +42,8 @@
 
         }; 
         socket.onmessage = function (event) {  
-            var data = JSON.parse(event.data); 
+            var json = pako.inflate(event.data,{ to: "string" });
+            var data = JSON.parse(json);  
             $("#message").append(JSON.stringify(data)+"<br>"); 
 
             if (data.ping) { 
